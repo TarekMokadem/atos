@@ -1,0 +1,35 @@
+.sidenav-container {
+  height: 83%;
+}
+
+.sidenav {
+  width: 200px;
+  position: absolute;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+.mat-toolbar.mat-primary {
+  background-color: #009CF4;
+  position: sticky;
+  padding: 4% 2% 4% 2%;
+  top: 0;
+  z-index: 1;
+}
+.no-shadow mat-toolbar{
+  box-shadow: none;
+}
+.example-fill-remaining-space {
+  // This fills the remaining space, by using flexbox.
+  // Every toolbar row uses a flexbox row layout.
+  flex: 1 1 auto;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.body-wrapper {
+  zoom: 1 !important;
+}

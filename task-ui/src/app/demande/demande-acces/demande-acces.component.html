@@ -1,0 +1,241 @@
+<h1 class="title">Demande d'Accès</h1>
+<!-- Daily Activity -->
+<mat-card class="w-100">
+    <mat-card-content>
+      <h4 class="mb-16">Utilisateurs VPN</h4>
+
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+      </mat-form-field>
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="filteredUserList">
+  
+          <!-- User Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> User </th>
+            <td mat-cell class="fw-medium" *matCellDef="let element"> {{element.firstName +" "+ (element.lastName | uppercase) }} </td>
+          </ng-container>
+  
+          <!-- Login Column -->
+          <ng-container matColumnDef="login">
+            <th mat-header-cell *matHeaderCellDef> Login VPN </th>
+            <td mat-cell *matCellDef="let element">
+              <p class="mb-0 fw-medium op-5">{{ element.login }}</p>
+            </td>
+          </ng-container>
+  
+          <!-- Device Column -->
+          <ng-container matColumnDef="deviceSerialNumber">
+            <th mat-header-cell *matHeaderCellDef> Device Serial Number </th>
+            <td mat-cell *matCellDef="let element">
+              <p class="mb-0 fw-medium">{{element.deviceSerialNumber}}</p>
+            </td>
+          </ng-container>   
+
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+              <mat-checkbox color="primary" [checked]="selectedUserIds.includes(element.id)"  (change)="onCheckboxChange(element, $event)" class="compact-checkbox"></mat-checkbox>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+
+      </div>
+    </mat-card-content>
+
+  <mat-card-content>
+    <h4 class="mb-16">Environnement</h4>
+    <mat-form-field>
+      <mat-label>Environnement</mat-label>
+      <input matInput [(ngModel)]="newAccessVpn.environment"  placeholder="Ex. DEVTIG" #input>
+    </mat-form-field>
+
+    <h4 class="mt-32 mb-16">Module</h4>
+    <mat-form-field>
+      <mat-label>Module</mat-label>
+      <input matInput [(ngModel)]="newAccessVpn.module" placeholder="Ex. PWS" #input>
+    </mat-form-field>
+
+    <h4 class="mt-32 mb-8">Access VPN</h4>
+    <h5 class="mt-8 mb-16">Adresse IP</h5>
+    <mat-form-field>
+      <mat-label>Adresse IP</mat-label>
+      <input matInput [(ngModel)]="newAccessVpn.ip" placeholder="Ex. 10.101.110.1" #input>
+    </mat-form-field>
+
+    <h5 class="mt-8 mb-16">Ports</h5>
+    <div 
+      class="alert alert-border-info alert-text-info background-none d-flex fs-14 align-items-center rounded mb-16"
+      role="alert">
+      <i-feather name="info" class="text-info feather-base me-12"></i-feather>
+      Ex: <br> https:443,6465,65465,654 <br> mysql:3306
+    </div>
+    <mat-form-field >
+      <mat-label>Ports</mat-label>
+      <!--<input matInput  placeholder="Ex. 433,3306,37446" #input>-->
+      <textarea matInput rows="6" [(ngModel)]="tmp" ></textarea>
+    </mat-form-field>
+    
+    <button mat-raised-button class="me-8 mb-8" color="primary" (click)="addAccessVpn()">ajouter +</button>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="accessVpns" class="text-nowrap w-100">
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="environment">
+          <th mat-header-cell *matHeaderCellDef> Environnement </th>
+          <td mat-cell class="fw-medium" *matCellDef="let element"> {{element.environment }} </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="module">
+          <th mat-header-cell *matHeaderCellDef> Module </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium op-5">{{ element.module }}</p>
+          </td>
+        </ng-container>
+
+        <!-- Count Column -->
+        <ng-container matColumnDef="ip">
+          <th mat-header-cell *matHeaderCellDef> Adresse IP </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{element.ip}}</p>
+          </td>
+        </ng-container>   
+
+        <!-- Count Column -->
+        <ng-container matColumnDef="ports">
+          <th mat-header-cell *matHeaderCellDef> Ports </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium" *ngFor="let port of element.ports">{{ port.number }} - {{ port.description }}</p>
+          </td>
+        </ng-container>  
+
+        <!-- Delete Column -->
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="warn" (click)="deleteVpn(element)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsVpn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsVpn;"></tr>
+      </table>
+
+
+    </div>
+
+    <button mat-raised-button class="mt-16 mb-16" color="primary" (click)="addToDetails()" style="background-color: green;">Valider la selection users+vpns</button>
+  </mat-card-content>
+</mat-card>
+
+<div id="preview">
+<mat-card class="w-100">
+  <mat-card-content>
+  <h4 class="mb-16">Détails supplémentaire (Preview)</h4>
+  <table id="vpn-table" border="1" style="width: 100%; border-collapse: collapse;">
+    <!-- TODO translate to frensh -->
+    <thead>
+      <tr>
+        <th>Environment</th>
+        <th>Module</th>
+        <th>IP</th>
+        <th>Ports</th>
+        <th>Full Name</th>
+        <th>Login</th>
+        <th>Device Serial Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let vpn of accessDetails.accessVpns">
+        <ng-container *ngFor="let user of accessDetails.users; let i = index">
+          <tr>
+            <!-- Only first row  -->
+            <td *ngIf="i === 0" [attr.rowspan]="accessDetails.users.length">{{ vpn.environment }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="accessDetails.users.length">{{ vpn.module }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="accessDetails.users.length">{{ vpn.ip }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="accessDetails.users.length">
+              <ul>
+                <li *ngFor="let port of vpn.ports">{{ port.number.join(', ') }} - {{port.description}}</li>
+              </ul>
+            </td>
+            <!-- User details -->
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ user.deviceSerialNumber }}</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+  <mat-form-field>
+    <mat-label>Ajouter un description</mat-label>
+    <input matInput [(ngModel)]="accessDetails.description" #input>
+  </mat-form-field>
+  <button mat-raised-button class="me-8 mt-16 mb-8" color="primary" (click)="addToDemande()">Ajouter à la demande</button>
+</mat-card-content>
+</mat-card>
+
+
+<mat-card class="w-100">
+  <mat-card-content>
+  <h4 class="mb-16">Aperçu de la demande</h4>
+  <div *ngFor="let detail of accessDemande.accessDetails">
+    <h2>{{ detail.description }}</h2>
+    <table id="vpn-table" border="1" style="width: 100%; border-collapse: collapse;">
+      <!-- TODO translate to frensh -->
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Module</th>
+          <th>IP</th>
+          <th>Ports</th>
+          <th>Full Name</th>
+          <th>Login</th>
+          <th>Device Serial Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let vpn of detail.accessVpns">
+          <ng-container *ngFor="let user of detail.users; let i = index">
+            <tr>
+              <!-- Only first row  -->
+              <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.environment }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.module }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.ip }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">
+                <ul>
+                  <li *ngFor="let port of vpn.ports">{{ port.number.join(', ') }} - {{port.description}}</li>
+                </ul>
+              </td>
+              <!-- User details -->
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.login }}</td>
+              <td>{{ user.deviceSerialNumber }}</td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <mat-form-field>
+    <mat-label>Objet ou Titre de la demande</mat-label>
+    <input matInput [(ngModel)]="accessDemande.description" #input>
+  </mat-form-field>
+
+  <button mat-raised-button class="me-8 mt-16 mb-8" color="primary" (click)="save()">Enregistrer</button>
+</mat-card-content>
+</mat-card>
+</div>

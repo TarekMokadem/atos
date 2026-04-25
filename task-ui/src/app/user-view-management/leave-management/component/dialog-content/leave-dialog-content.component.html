@@ -1,0 +1,31 @@
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="leaveForm" (ngSubmit)="submitForm()">
+    <div class="d-flex">
+      <mat-form-field appearance="outline">
+        <mat-label>Jour</mat-label>
+        <input matInput placeholder="Jour" [matDatepicker]="picker" formControlName="jour">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <div class="ps-32"></div>
+
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date Demande</mat-label>
+        <input matInput placeholder="Date Demande" [matDatepicker]="picker2" formControlName="dateDemande">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Raison</mat-label>
+      <input matInput placeholder="Raison" formControlName="raison">
+    </mat-form-field>
+
+    <div class="d-flex" style="justify-content: space-around">
+      <button mat-raised-button color="primary">Créer</button>
+    </div>
+  </form>
+</mat-dialog-content>

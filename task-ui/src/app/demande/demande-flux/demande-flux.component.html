@@ -1,0 +1,96 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Machines Sources</mat-card-title>
+    <mat-form-field class="demo-chip-list">
+      <mat-label>IPs sources</mat-label>
+      <mat-chip-grid #chipGrid aria-label="ajouter ip">
+        <mat-chip-row *ngFor="let ip of ips" (removed)="remove(ip)" [editable]="true"
+          (edited)="edit(ip, $event)" [aria-description]="'press enter to edit ' + ip">
+          {{ip}}
+          <button matChipRemove [attr.aria-label]="'remove ' + ip">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input placeholder="nouveau ip..." [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="add($event)" />
+      </mat-chip-grid>
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+    <mat-card-content>
+      <mat-card-title>Identification source</mat-card-title>
+
+      <mat-form-field>
+        <mat-label>Identification source</mat-label>
+        <input matInput placeholder="Ex. workers du namesSpace" #input>
+      </mat-form-field>
+    </mat-card-content>
+    
+</mat-card>
+
+<mat-card class="w-100">
+    <mat-card-content>
+      <h4 class="mb-16">Adresse IP</h4>
+      <mat-form-field>
+        <mat-label>IP</mat-label>
+        <input matInput [(ngModel)]="newDestinationVpn.ip"  placeholder="Ex. 10.10.10.10" #input>
+      </mat-form-field>
+  
+      <h4 class="mt-32 mb-16">Identification</h4>
+      <mat-form-field>
+        <mat-label>Identification</mat-label>
+        <input matInput [(ngModel)]="newDestinationVpn.identification" placeholder="Ex. SOI TIG" #input>
+      </mat-form-field>
+
+      <h4 class="mt-8 mb-16">Ports</h4>
+      <mat-form-field >
+        <mat-label>Ports</mat-label>
+        <textarea matInput rows="6" [(ngModel)]="newDestinationVpn.ports" placeholder="Ex. 433,3306,37446" ></textarea>
+      </mat-form-field>
+      <div 
+        class="alert alert-border-info alert-text-info background-none d-flex fs-14 align-items-center rounded mb-16"
+        role="alert">
+        <i-feather name="info" class="text-info feather-base me-12"></i-feather>
+        Separate with a comma or a space
+      </div>
+      <button mat-raised-button class="me-8 mb-8" color="primary" (click)="addAccessVpn()">Add +</button>
+  
+      <div class="table-responsive">
+        <table mat-table [dataSource]="destinationVpns" class="text-nowrap w-100">
+  
+          <!-- Category Column -->
+          <ng-container matColumnDef="ip">
+            <th mat-header-cell *matHeaderCellDef> Ip </th>
+            <td mat-cell class="fw-medium" *matCellDef="let element"> {{element.ip }} </td>
+          </ng-container>
+  
+          <!-- Description Column -->
+          <ng-container matColumnDef="identification">
+            <th mat-header-cell *matHeaderCellDef> Identification </th>
+            <td mat-cell *matCellDef="let element">
+              <p class="mb-0 fw-medium op-5">{{ element.identification }}</p>
+            </td>
+          </ng-container>
+  
+          <!-- Count Column -->
+          <ng-container matColumnDef="ports">
+            <th mat-header-cell *matHeaderCellDef> Ports </th>
+            <td mat-cell *matCellDef="let element">
+              <p class="mb-0 fw-medium">{{element.ports}}</p>
+            </td>
+          </ng-container>  
+          
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsVpn"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsVpn;"></tr>
+        </table>
+  
+  
+      </div>
+  
+  
+    </mat-card-content>
+  </mat-card>

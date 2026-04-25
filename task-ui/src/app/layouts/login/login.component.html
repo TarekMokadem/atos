@@ -1,0 +1,49 @@
+<mat-toolbar color="primary">
+  <img src="assets/images/atos_logo.png" width="10%">
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+
+<mat-sidenav-container class="sidenav-container">
+
+  <!-- Sidebar -->
+
+
+  <mat-sidenav-content>
+
+    <!-- Header -->
+
+    <!-- Content -->
+    <div class="body-wrapper">
+      <div class="page-wrapper">
+      </div>
+    </div>
+
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
+</mat-toolbar>
+
+<h1 class="title">CONNEXION</h1>
+
+<!-- Form Layout -->
+<div style="margin: 5% 30% 5% 30%;" class="card">
+  <div class="card-body" >
+    <form>
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Nom de compte</mat-label>
+        <input matInput [(ngModel)]="credentials.email" name="email" type="email" placeholder="Entrez votre nom de compte">
+      </mat-form-field>
+
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput [(ngModel)]="credentials.password" name="password" type="password" placeholder="Entrez votre mot de passe">
+      </mat-form-field>
+
+      <div>
+      <button mat-button class="custom-button" (click)="login()" type="submit">Entrer</button>
+  </div>
+    </form>
+  </div>
+</div>

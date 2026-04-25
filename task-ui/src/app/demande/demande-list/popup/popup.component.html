@@ -1,0 +1,41 @@
+<div id="contentPop">
+<div *ngFor="let detail of data.accessDetails">
+  <h2>{{ detail.description }}</h2>
+  <table id="vpn-table" border="1" style="width: 100%; border-collapse: collapse;">
+    <!-- TODO translate to frensh -->
+    <thead>
+      <tr>
+        <th>Environment</th>
+        <th>Module</th>
+        <th>IP</th>
+        <th>Ports</th>
+        <th>Full Name</th>
+        <th>Login</th>
+        <th>Device Serial Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let vpn of detail.accessVpns">
+        <ng-container *ngFor="let user of detail.users; let i = index">
+          <tr>
+            <!-- Only first row  -->
+            <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.environment }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.module }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">{{ vpn.ip }}</td>
+            <td *ngIf="i === 0" [attr.rowspan]="detail.users.length">
+              <ul>
+                <li *ngFor="let port of vpn.ports">{{ port.number.join(', ') }} - {{port.description}}</li>
+              </ul>
+            </td>
+            <!-- User details -->
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ user.deviceSerialNumber }}</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+</div>
+<button mat-raised-button class="me-8 mt-16 mb-8" color="primary" (click)="selectDivContent()">Copy to Clipboard</button>

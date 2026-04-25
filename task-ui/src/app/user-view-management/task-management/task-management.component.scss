@@ -1,0 +1,80 @@
+* {
+  font-size: 1rem;
+}
+mat-label {
+  font-size: 1rem !important;
+}
+mat-icon {
+  font-size: 1.5rem;
+}
+.delete-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: #d70101;
+}
+.edit-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: rgba(0, 156, 244, 0.87);
+}
+.confirm-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: rgb(36, 197, 0);
+}
+mat-form-field:not(.date)  {
+  width: 50%;
+}
+.title {
+  font-size: 2rem;
+  text-align: center;
+  color: #009CF4;
+  padding-bottom: 4rem;
+}
+.input {
+  width: 100%;
+  height: 100%;
+}
+.ticketTextarea {
+  white-space: nowrap;
+  width: 10% !important;
+  height: 100%;
+}
+
+.descriptionTextarea {
+  width: 100% !important;
+  height: 100%;
+}
+.dateTextarea {
+  width: 50%;
+  padding: 16px 2px 16px 2px !important;
+}
+input.checkbox {
+  width: 25px;
+  height: 25px;
+
+}
+.mdc-data-table__cell, .mdc-data-table__header-cell {
+  padding: 16px 7px 16px 7px !important;
+}
+textarea.chDev {
+  width: 50% !important;
+}
+textarea.chiffrage {
+  width: 50% !important;
+}
+mat-form-field.date {
+}
+
+.file-input {
+  display: none;
+}
+.upload-btn{
+  margin-left: 1rem;
+  height: 3.5rem !important;
+  width: 3.5rem !important;
+}
+.upload-btn mat-icon{
+  font-size: 1.6rem;
+  overflow: visible;
+}

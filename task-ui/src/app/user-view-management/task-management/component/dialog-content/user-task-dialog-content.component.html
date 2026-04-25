@@ -1,0 +1,99 @@
+<mat-dialog-content class="dialog-content">
+
+      <form [formGroup]="taskForm" (ngSubmit)="submitForm()">
+        <div class="d-flex">
+          <mat-form-field appearance="outline">
+            <mat-label>Ticket Jira</mat-label>
+            <input matInput placeholder="Ticket Jira" formControlName="ticket" >
+          </mat-form-field>
+
+          <div class="ps-32"></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <input matInput placeholder="Type" formControlName="type">
+          </mat-form-field>
+
+          <div class="ps-32"></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Statut</mat-label>
+            <input matInput placeholder="Statut" formControlName="statut">
+          </mat-form-field>
+
+
+          <div hidden="true">
+            <mat-form-field appearance="outline">
+              <mat-label>Responsable</mat-label>
+              <input matInput placeholder="Responsable" formControlName="responsable" >
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea matInput placeholder="Description" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <div class="d-flex" style="justify-content: space-around">
+          <mat-form-field appearance="outline">
+            <mat-label>CH Dev</mat-label>
+            <input matInput placeholder="CH Dev" formControlName="chDev">
+          </mat-form-field>
+
+          <div class="ps-32"></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Chiffrage</mat-label>
+            <input matInput placeholder="Chiffrage" formControlName="chiffrage">
+          </mat-form-field>
+
+        </div>
+
+        <div class="d-flex" style="justify-content: space-around">
+          <mat-form-field appearance="outline">
+            <mat-label>Dev Tig</mat-label>
+            <input matInput placeholder="Dev Tig" [matDatepicker]="picker1" formControlName="devTig">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+
+          <div class="ps-32"></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Livraison Tig</mat-label>
+            <input matInput placeholder="Livraison Tig" [matDatepicker]="picker2" formControlName="livraisonTig">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="d-flex">
+          <mat-form-field appearance="outline">
+            <mat-label>Date réponse</mat-label>
+            <input matInput placeholder="Date réponse" [matDatepicker]="picker3" formControlName="dateReponse">
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+          </mat-form-field>
+
+          <div class="ps-32"></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>AST</mat-label>
+            <input matInput placeholder="AST">
+          </mat-form-field>
+        </div>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Commentaire</mat-label>
+          <textarea matInput placeholder="Commentaire" formControlName="commentaire"></textarea>
+        </mat-form-field>
+
+        <div class="d-flex" style="justify-content: space-around">
+          <button mat-raised-button color="primary" type="submit">Créer</button>
+        </div>
+      </form>
+
+</mat-dialog-content>

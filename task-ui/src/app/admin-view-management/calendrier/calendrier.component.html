@@ -1,0 +1,14 @@
+<h1 class="title">CALENDRIER</h1>
+<mwl-calendar-scheduler
+  [viewDate]="viewDate"
+  [events]="events"
+  [hourSegments]="4"
+  [weekStartsOn]="0"
+  [startsWithToday]="true"
+  [weekendDays]="[0, 6]"
+  [excludedDays]="[0]"
+  [hourDuration]="60"
+  [dayStartHour]="8"
+  [dayEndHour]="18"
+  (eventClicked)="handleEventClicked($event)">
+</mwl-calendar-scheduler>

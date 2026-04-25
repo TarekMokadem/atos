@@ -1,0 +1,166 @@
+<h1 class="title">TÂCHES</h1>
+<!--<button mat-button (click)="test()">Test</button>-->
+<!--<input type="file" class="form-control w-100" (change)="readExcelFile($event)">-->
+
+<input type="file" class="file-input"
+       (change)="readExcelFile($event)" #fileUpload>
+
+<div class="file-upload">
+
+  {{fileName || "No file uploaded yet."}}
+
+  <button mat-mini-fab color="primary" class="upload-btn"
+          (click)="fileUpload.click()">
+    <mat-icon>attach_file</mat-icon>
+  </button>
+</div>
+
+
+<div class="m-20"></div>
+<div class="d-flex">
+  <mat-form-field>
+    <mat-label>Ticket</mat-label>
+    <input matInput [formControl]="ticketForm" (keyup)="applyFilters()" placeholder="Ex. Mia" #input>
+  </mat-form-field>
+  <div class="ps-32"></div>
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <input matInput [formControl]="descriptionForm" (keyup)="applyFilters()" placeholder="Ex. Mia" #input>
+  </mat-form-field>
+  <div class="ps-32"></div>
+  <mat-form-field>
+    <mat-label>Type</mat-label>
+    <mat-select [formControl]="typeSelectForm" multiple>
+      <mat-option (click)="applyFilters()" *ngFor="let type of Types" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="ps-32"></div>
+  <mat-form-field>
+    <mat-label>Statut</mat-label>
+    <mat-select [formControl]="statutSelectForm" multiple>
+      <mat-option (click)="applyFilters()" *ngFor="let statut of Statuts" [value]="statut">{{statut}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="ps-32"></div>
+  <mat-form-field>
+    <mat-label>Responsable</mat-label>
+    <mat-select [formControl]="responsableSelectForm" multiple>
+      <mat-option (click)="applyFilters()" *ngFor="let responsable of Responsables"
+                  [value]="responsable">{{responsable}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="ps-32"></div>
+  <mat-form-field>
+    <mat-label>Date Réponse</mat-label>
+    <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+      <input matStartDate formControlName="start" placeholder="Start date">
+      <input matEndDate formControlName="end" (dateChange)="applyFilters()" placeholder="End date">
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+
+</div>
+
+<div style="display: flex; justify-content: space-between">
+
+  <div>
+
+    <button mat-raised-button class="clear-filter" (click)="clearFilters()">Effacer</button>
+  </div>
+
+  <div style="display: flex">
+    <button mat-raised-button class="add-entity" (click)="openDialogStatut()">Nouveau Statut</button>
+    <div class="ps-32"></div>
+    <button mat-raised-button class="add-entity" (click)="openDialogResponsable()">Nouveau Responsable</button>
+    <div class="ps-32"></div>
+    <button mat-raised-button class="add-entity" (click)="openDialog()">Ajouter</button>
+  </div>
+
+</div>
+
+<div class="m-20"></div>
+<table mat-table [dataSource]="dataSource" matSort>
+  <ng-container *ngFor="let column of displayedColumns.slice(0,displayedColumns.length-1); let i = index">
+    <ng-container matColumnDef="{{column}}">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column"> {{columnHeader[i]}} </th>
+      <td mat-cell *matCellDef="let element"
+          [ngClass]="{'ticketTextarea': column === 'ticket' && element.editMode,
+                              'descriptionTextarea': column === 'description' && element.editMode,
+                              'dateTextarea': (column === 'devTig' ||  column === 'livraisonTig' || column === 'dateReponse') && element.editMode}">
+        <input type="checkbox" class="checkbox" [(ngModel)]="element['ast']"
+                                                    *ngIf="column == 'ast' " [disabled]="!element.editMode">
+        <textarea type="text" class=" {{column == 'chDev' ? 'chDev' : (column == 'chiffrage' ? 'chiffrage' : 'input')}}"
+                  *ngIf="element.editMode && column!='ast' && column !='statut' && column !='responsable'  && column!='devTig' && column != 'livraisonTig' && column != 'dateReponse'"
+                  [(ngModel)]="element[column]">
+        </textarea>
+
+        <div [formGroup]="selectGroup" style="width:150%; display: flex">
+
+          <mat-form-field *ngIf="element.editMode && column =='statut'">
+            <mat-label>Select</mat-label>
+            <mat-select [(value)]="selectedStatut" formControlName="statut" multiple>
+              <mat-option *ngFor="let statut of StatutDB" [value]="statut">{{statut}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="element.editMode && column =='responsable'">
+            <mat-label>Select</mat-label>
+            <mat-select [(value)]="element.responsable" formControlName="responsable" multiple>
+              <mat-option *ngFor="let responsable of ResponsableDB" [value]="responsable">{{responsable}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div [formGroup]="dateGroup" style="width:65%; display: flex">
+          <mat-form-field class="date" appearance="outline"
+                          *ngIf="element.editMode && column!='ast' && column=='devTig'">
+            <input matInput [matDatepicker]="datePicker1" formControlName="{{column}}" [(ngModel)]="element[column]" (dateChange)="element[column] = $event.value">
+            <mat-datepicker-toggle matSuffix [for]="datePicker1"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker1></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="date" appearance="outline"
+                          *ngIf="element.editMode && column!='ast' && column == 'livraisonTig'">
+            <input matInput [matDatepicker]="datePicker2" formControlName="{{column}}" [(ngModel)]="element[column]" (dateChange)="element[column] = $event.value">
+            <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker2></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="date" appearance="outline"
+                          *ngIf="element.editMode && column!='ast' && column == 'dateReponse'">
+            <input matInput [matDatepicker]="datePicker3" formControlName="{{column}}" [(ngModel)]="element[column]" (dateChange)="element[column] = $event.value">
+            <mat-datepicker-toggle matSuffix [for]="datePicker3"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker3></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <span *ngIf="!element.editMode && column != 'ast' "
+              [ngClass]="{'ticket': column === 'ticket',
+                              'description': column === 'description'}">{{column == 'devTig' || column == 'livraisonTig'  || column == 'dateReponse' ? (element[column] | date: 'dd/MM/yyyy') : element[column] }}</span></td>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+    <td mat-cell *matCellDef="let row">
+      <div style="display:flex;">
+        <button mat-fab aria-label="Example icon button with a delete icon" (click)="deleteTask(row.id)"
+                class="delete-icon" *ngIf="!row.editMode">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-fab aria-label="Example icon button with a delete icon" (click)="editBoolChange(row)"
+                class="delete-icon" *ngIf="row.editMode">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <div class="ps-8"></div>
+        <button mat-fab aria-label="Example icon button with a delete icon" (click)="editBoolChange(row)"
+                class="edit-icon" *ngIf="!row.editMode">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-fab aria-label="Example icon button with a delete icon" (click)="editTask(row)"
+                class="confirm-icon" *ngIf="row.editMode">
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>

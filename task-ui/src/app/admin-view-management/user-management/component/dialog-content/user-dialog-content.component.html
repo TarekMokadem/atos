@@ -1,0 +1,77 @@
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+    <div class="d-flex">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nom</mat-label>
+        <input matInput placeholder="Nom" formControlName="lastname">
+      </mat-form-field>
+
+      <div class="ps-32"></div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Prénom</mat-label>
+        <input matInput placeholder="Prénom" formControlName="firstname">
+      </mat-form-field>
+
+      <div class="ps-32"></div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Email" formControlName="email">
+      </mat-form-field>
+    </div>
+    <div class="m-20"></div>
+    <div class="d-flex">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput placeholder="Mot de passe" formControlName="password">
+      </mat-form-field>
+
+    </div>
+    <div class="m-20"></div>
+    <div class="d-flex">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Équipe</mat-label>
+        <input matInput placeholder="Équipe" formControlName="equipe">
+      </mat-form-field>
+
+      <div class="ps-32"></div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Domaine</mat-label>
+        <input matInput placeholder="Domaine" formControlName="domaine">
+      </mat-form-field>
+
+      <div class="ps-32"></div>
+
+      <mat-form-field>
+        <mat-label>Select an option</mat-label>
+        <mat-select [(value)]="selected" formControlName="role">
+          <mat-option value="USER">USER</mat-option>
+          <mat-option value="ADMIN">ADMIN</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+    <div class="m-20"></div>
+    <div class="d-flex">
+
+        <ngx-intl-tel-input formControlName="mobile"
+                            [preferredCountries]="['ma', 'fr', 'es']"
+                            [enablePlaceholder]="true"
+                             name="phone" #phone >
+        </ngx-intl-tel-input>
+
+
+
+    </div>
+    <div class="m-20"></div>
+
+    <div class="d-flex" style="justify-content: space-around">
+      <button mat-raised-button color="primary">Créer</button>
+    </div>
+  </form>
+</mat-dialog-content>

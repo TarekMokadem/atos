@@ -1,0 +1,53 @@
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="leaveForm" (ngSubmit)="submitForm()">
+
+
+      <div class="d-flex">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Employé</mat-label>
+          <input matInput placeholder="Employé" formControlName="employe">
+        </mat-form-field>
+
+        <div class="ps-32"></div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Jour de début</mat-label>
+          <input matInput placeholder="Jour" [matDatepicker]="picker" formControlName="jour">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+      </div>
+
+      <div class="d-flex">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Durée</mat-label>
+          <input matInput placeholder="Durée" formControlName="duree">
+        </mat-form-field>
+
+        <div class="ps-32"></div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Raison</mat-label>
+          <input matInput placeholder="Raison" formControlName="raison">
+        </mat-form-field>
+
+        <div class="ps-32"></div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select formControlName="statut">
+            <mat-option value="Accepté">Accepté</mat-option>
+            <mat-option value="En Attente">En Attente</mat-option>
+            <mat-option value="Refusé">Refusé</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    <div class="d-flex" style="justify-content: space-around">
+      <button mat-raised-button color="primary">Créer</button>
+    </div>
+  </form>
+</mat-dialog-content>

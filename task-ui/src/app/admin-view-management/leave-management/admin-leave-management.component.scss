@@ -1,0 +1,50 @@
+
+mat-icon {
+  font-size: 1.5rem;
+}
+.delete-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: #d70101;
+}
+.edit-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: rgba(0, 156, 244, 0.87);
+}
+.title {
+  font-size: 2rem;
+  text-align: center;
+  color: #009CF4;
+  padding-bottom: 4rem;
+}
+
+.valide{
+  color: #02c902;
+  font-weight: bold;
+}
+.refus{
+  color: #da0101;
+  font-weight: bold;
+}
+.attente{
+  color: #d58c01;
+  font-weight: bold;
+}
+
+
+.valide-icon {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  background-color: #02c902;
+}
+.refus-icon {
+   height: 2.5rem !important;
+   width: 2.5rem !important;
+   background-color: #da0101;
+ }
+.attente-icon {
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+    background-color: #d58c01;
+  }
