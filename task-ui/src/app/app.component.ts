@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { environment } from '../environments/environment';
+import { showDemoChrome } from '../environments/demo-settings';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +8,6 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
   title = 'flexy-angular';
-  readonly demoMode = environment.demoMode;
+  /** Découplé de environment.prod.ts (souvent réécrit en CI) : voir demo-settings.ts */
+  readonly demoMode = showDemoChrome;
 }

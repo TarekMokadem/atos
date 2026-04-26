@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
-import { environment } from '../../../environments/environment';
+import { demoAccounts, showDemoChrome } from '../../../environments/demo-settings';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +11,8 @@ export class LoginComponent {
 
   credentials = { email: '', password: '' };
 
-  readonly demoMode = environment.demoMode;
-  readonly demoAccounts = environment.demoAccounts;
+  readonly demoMode = showDemoChrome;
+  readonly demoAccounts = demoAccounts;
 
   constructor(private authService: AuthService) {}
 

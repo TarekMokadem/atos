@@ -15,7 +15,7 @@ import java.util.*;
 public class LeavePermission {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date jour;
