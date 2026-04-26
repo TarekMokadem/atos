@@ -103,6 +103,33 @@ public class DemoDataBootstrapRunner implements ApplicationRunner {
                 .dateDemande(now)
                 .build());
 
+        // Chevauchement volontaire pour le calendrier (même période, employés différents)
+        Date overlapStart = addDays(now, 18);
+        leavePermissionRepository.save(LeavePermission.builder()
+                .jour(overlapStart)
+                .duree(4)
+                .raison("Congés famille (fictif) — bloc A")
+                .statut("Validé")
+                .employe("Sophie Collaborateur")
+                .dateDemande(now)
+                .build());
+        leavePermissionRepository.save(LeavePermission.builder()
+                .jour(overlapStart)
+                .duree(3)
+                .raison("Congés famille (fictif) — bloc B chevauché")
+                .statut("En attente")
+                .employe("Jean Dupont")
+                .dateDemande(now)
+                .build());
+        leavePermissionRepository.save(LeavePermission.builder()
+                .jour(addDays(now, 20))
+                .duree(2)
+                .raison("Demi-journées (exemple chevauchement partiel)")
+                .statut("En attente")
+                .employe("Marie Martin")
+                .dateDemande(now)
+                .build());
+
         log.info("Jeu de démo chargé : admin {} / utilisateur {}.", DEMO_ADMIN_EMAIL, DEMO_USER_EMAIL);
     }
 

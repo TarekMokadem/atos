@@ -99,3 +99,12 @@
 .demo-account-block button {
   margin-top: 0.75rem;
 }
+
+@media (max-width: 768px) {
+  .card {
+    margin: 5% 6% 5% 6% !important;
+  }
+  .demo-accounts-wrap {
+    margin: 0 6% 1.5rem;
+  }
+}

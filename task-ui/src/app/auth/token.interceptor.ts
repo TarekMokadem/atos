@@ -15,7 +15,6 @@ export class TokenInterceptor implements HttpInterceptor {
     const isDisallowedRoute = this.isPublicAuthRoute(request.url);
 
     if (token && !isDisallowedRoute) {
-      console.log(isDisallowedRoute);
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

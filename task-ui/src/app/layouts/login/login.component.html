@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-  <img src="assets/images/atos_logo.png" width="10%">
+  <img src="assets/images/atos_logo.png" width="10%" alt="Logo Atos">
 
   <!-- This fills the remaining space of the current row -->
   <span class="example-fill-remaining-space"></span>
@@ -29,7 +29,7 @@
 
 <div *ngIf="demoMode" class="demo-accounts-wrap">
   <mat-card class="demo-accounts-card">
-    <mat-card-title>Comptes de démonstration</mat-card-title>
+    <mat-card-title id="demo-accounts-title">Comptes de démonstration</mat-card-title>
     <mat-card-subtitle>Données fictives — application de démo réalisée dans le cadre d’une expérience chez Atos.</mat-card-subtitle>
     <mat-card-content>
       <div class="demo-account-block">
@@ -50,21 +50,25 @@
 </div>
 
 <!-- Form Layout -->
-<div style="margin: 5% 30% 5% 30%;" class="card">
+<div style="margin: 5% 30% 5% 30%;" class="card" role="main" aria-labelledby="login-heading">
   <div class="card-body" >
-    <form>
+    <form (ngSubmit)="login()" novalidate>
       <mat-form-field class="w-100 fs-16" appearance="outline">
-        <mat-label>Nom de compte</mat-label>
-        <input matInput [(ngModel)]="credentials.email" name="email" type="email" placeholder="Entrez votre nom de compte">
+        <mat-label>Adresse e-mail</mat-label>
+        <input matInput [(ngModel)]="credentials.email" name="email" type="email" autocomplete="username"
+               required aria-required="true"
+               placeholder="ex. demo.admin@atos.fr">
       </mat-form-field>
 
       <mat-form-field class="w-100 fs-16" appearance="outline">
         <mat-label>Mot de passe</mat-label>
-        <input matInput [(ngModel)]="credentials.password" name="password" type="password" placeholder="Entrez votre mot de passe">
+        <input matInput [(ngModel)]="credentials.password" name="password" type="password" autocomplete="current-password"
+               required aria-required="true"
+               placeholder="Saisissez votre mot de passe">
       </mat-form-field>
 
       <div>
-      <button mat-button class="custom-button" (click)="login()" type="submit">Entrer</button>
+      <button mat-button class="custom-button" type="submit" aria-label="Se connecter à l’application">Entrer</button>
   </div>
     </form>
   </div>

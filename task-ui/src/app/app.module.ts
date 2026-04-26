@@ -39,6 +39,7 @@ import { AuthService } from './auth/auth.service';
 import { JwtModule, JwtHelperService  } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth/token.interceptor';
+import { HttpErrorInterceptor } from './auth/http-error.interceptor';
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { PopupComponent } from './demande/demande-list/popup/popup.component';
@@ -60,6 +61,7 @@ import {
 } from "./admin-view-management/task-management/component/dialog-content-statut/statut-leave-dialog-content.component";
 import { API_BASE_URL } from '../environments/api-base-url';
 import { DemoBannerComponent } from './components/demo-banner/demo-banner.component';
+import { LeaveCalendarComponent } from './components/leave-calendar/leave-calendar.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -88,7 +90,8 @@ export function tokenGetter() {
     UserLivraisonComponent,
     UserResponsableLeaveDialogContentComponent,
     UserStatutLeaveDialogContentComponent,
-    DemoBannerComponent
+    DemoBannerComponent,
+    LeaveCalendarComponent
   ],
     imports: [
         MatDialogModule,
@@ -118,6 +121,7 @@ export function tokenGetter() {
     ],
   providers: [
     AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ],

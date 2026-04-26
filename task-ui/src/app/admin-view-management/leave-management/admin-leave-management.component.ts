@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, inject, Input, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -7,6 +16,9 @@ import {TaskDialogContentComponent} from "../task-management/component/dialog-co
 import {MatDialog} from "@angular/material/dialog";
 import {LeaveDialogContentComponent} from "./component/dialog-content/leave-dialog-content.component";
 import {LeaveService} from "../../services/leave.service";
+import {calculateEndDate} from "../../shared/leave-date.utils";
+import {catchError, finalize} from "rxjs/operators";
+import {of} from "rxjs";
 
 
 @Component({
@@ -15,13 +27,16 @@ import {LeaveService} from "../../services/leave.service";
   styleUrl: './admin-leave-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AdminLeaveManagementComponent implements AfterViewInit {
+export class AdminLeaveManagementComponent implements OnInit, AfterViewInit {
   leaveData: any[] = [];
   displayedColumns: string[] = ['employe', 'jour', 'duree', 'fin', 'raison','statut', 'dateDemande','action'];
   dataSource: MatTableDataSource<LeaveData>;
   columnHeader: string[] = ['Employé', 'Début', 'Durée', 'Fin', 'Raison', 'Statut', 'Création'];
 
   Statut: any[] = [];
+  loading = false;
+  loadError: string | null = null;
+  leaveTabIndex = 0;
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -31,9 +46,7 @@ export class AdminLeaveManagementComponent implements AfterViewInit {
 
 
 
-  constructor(private leaveService: LeaveService) {
-    console.log(this.displayedColumns);
-
+  constructor(private leaveService: LeaveService, private readonly cdr: ChangeDetectorRef) {
     // Assign the data to the data source for the table to render
     this.dataSource = new MatTableDataSource();
 
@@ -44,34 +57,43 @@ export class AdminLeaveManagementComponent implements AfterViewInit {
 
 
   ngOnInit() {
-    this.leaveService.getLeaves().subscribe(data => {
-      console.log(data.map((item: any) => item));
-      this.dataSource = new MatTableDataSource(data);
-      this.leaveData = data.map((item: any) => {
-        // Ajouter la duree de jour à la date de jour pour avoir la date de fin
-        item.jour = new Date(item.jour);
-        item.fin = calculateEndDate(item.jour, item.duree);
-        return item
-      })
+    this.refreshLeaves();
+  }
 
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-
-      this.Statut = this.leaveData
-        .map(task => task.statut) // Extraire les valeurs de 'type'
-        .filter((value, index, self) => self.indexOf(value) === index); // Éliminer les doublons
-      console.log(this.Statut);
-
-    });
-    console.log(this.leaveData);
+  private refreshLeaves(): void {
+    this.loading = true;
+    this.loadError = null;
+    this.cdr.markForCheck();
+    this.leaveService
+      .getLeaves()
+      .pipe(
+        catchError(() => {
+          this.loadError = 'Impossible de charger les congés.';
+          return of([] as LeaveData[]);
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        })
+      )
+      .subscribe((data: LeaveData[]) => {
+        this.dataSource = new MatTableDataSource<LeaveData>(data);
+        this.leaveData = data.map((item: any) => {
+          item.jour = new Date(item.jour);
+          item.fin = calculateEndDate(item.jour, item.duree);
+          return item;
+        });
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.Statut = this.leaveData
+          .map((task) => task.statut)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        this.cdr.markForCheck();
+      });
   }
 
   getLeaves() {
-    this.leaveService.getLeaves().subscribe(data => {
-      console.log(data);
-      this.dataSource = new MatTableDataSource(data);
-      this.leaveData = data;
-    });
+    this.refreshLeaves();
   }
 
   getLeaveById(id: number) {
@@ -81,21 +103,21 @@ export class AdminLeaveManagementComponent implements AfterViewInit {
   }
 
   deleteLeave(id: number) {
-    this.leaveService.deleteLeave(id).subscribe(data => {
-      this.ngOnInit();
+    this.leaveService.deleteLeave(id).subscribe(() => {
+      this.refreshLeaves();
     });
   }
 
   acceptLeave(data: LeaveData) {
     data.statut = 'Accepté';
-    this.leaveService.editLeave(data).subscribe(data => {
-      this.ngOnInit();
+    this.leaveService.editLeave(data).subscribe(() => {
+      this.refreshLeaves();
     });
   }
   denyLeave(data: LeaveData) {
     data.statut = 'Refusé';
-    this.leaveService.editLeave(data).subscribe(data => {
-      this.ngOnInit();
+    this.leaveService.editLeave(data).subscribe(() => {
+      this.refreshLeaves();
     });
   }
 
@@ -202,9 +224,8 @@ export class AdminLeaveManagementComponent implements AfterViewInit {
   openDialog() {
     const dialogRef = this.dialog.open(LeaveDialogContentComponent);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-      this.ngOnInit();
+    dialogRef.afterClosed().subscribe(() => {
+      this.refreshLeaves();
     });
   }
 
@@ -220,59 +241,12 @@ export class AdminLeaveManagementComponent implements AfterViewInit {
 }
 
 export interface LeaveData {
-  "jour": Date;
-  "duree": Date;
-  "raison": string;
-  "statut": string;
-  "dateDemande": Date;
-}
-
-// Add this list of public holidays in the LeaveManagementComponent
-const publicHolidays = [
-  new Date('2025-01-01'), // New Year's Day
-  new Date('2025-01-11'), // Independence Manifesto Day
-  new Date('2025-01-14'), // Amazigh New Year's Day
-  new Date('2025-05-01'), // Labor Day
-  new Date('2025-07-30'), // Throne Day
-  new Date('2025-08-14'), // Oued Ed-Dahab Day
-  new Date('2025-08-20'), // Revolution Day
-  new Date('2025-08-21'), // Youth Day
-  new Date('2025-11-06'), // Green March Day
-  new Date('2025-11-18'), // Independence Day
-  // Islamic holidays (dates vary each year)
-  new Date('2025-04-22'), // Eid al-Fitr
-  new Date('2025-04-23'), // Eid al-Fitr
-  new Date('2025-06-28'), // Eid al-Adha
-  new Date('2025-06-29'), // Eid al-Adha
-  new Date('2025-07-18'), // Islamic New Year
-  new Date('2025-09-16'), // Prophet's Birthday
-];
-// Function to check if a date is a weekend
-function isWeekend(date: Date): boolean {
-  const day = date.getDay();
-  return day === 0 || day === 6; // Sunday or Saturday
-}
-
-// Function to check if a date is a public holiday
-function isPublicHoliday(date: Date): boolean {
-  return publicHolidays.some(holiday =>
-    holiday.getDate() === date.getDate() &&
-    holiday.getMonth() === date.getMonth() &&
-    holiday.getFullYear() === date.getFullYear()
-  );
-}
-
-// Function to calculate the end date considering weekends and public holidays
-function calculateEndDate(startDate: Date, duration: number): Date {
-  let endDate = new Date(startDate);
-  let daysAdded = 0;
-
-  while (daysAdded < duration) {
-    endDate.setDate(endDate.getDate() + 1);
-    if (!isWeekend(endDate) && !isPublicHoliday(endDate)) {
-      daysAdded++;
-    }
-  }
-
-  return endDate;
+  jour: Date;
+  duree: number;
+  raison: string;
+  statut: string;
+  dateDemande: Date;
+  employe?: string;
+  fin?: Date;
+  id?: number;
 }

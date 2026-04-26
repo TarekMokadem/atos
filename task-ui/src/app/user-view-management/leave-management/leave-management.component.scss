@@ -47,3 +47,28 @@ mat-icon {
   width: 2.5rem !important;
   background-color: #d58c01;
 }
+
+.leave-tabs {
+  margin-top: -2rem;
+}
+
+.leave-loading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.leave-error {
+  text-align: center;
+  color: #c62828;
+  padding: 1rem;
+}
+
+.leave-empty-cell {
+  text-align: center;
+  padding: 2rem 1rem !important;
+  color: rgba(0, 0, 0, 0.55);
+}

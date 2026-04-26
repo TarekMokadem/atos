@@ -1,4 +1,7 @@
 <h1 class="title">CONGÉS</h1>
+
+<mat-tab-group [(selectedIndex)]="leaveTabIndex" animationDuration="200ms" class="leave-tabs">
+  <mat-tab label="Tableau">
 <div class="d-flex">
   <mat-form-field>
     <mat-label>Jour de congé</mat-label>
@@ -41,7 +44,14 @@
 </div>
 <div class="m-20"></div>
 
-<mat-card class="w-100">
+<div *ngIf="loading" class="leave-loading" role="status" aria-live="polite">
+  <mat-progress-spinner diameter="40" mode="indeterminate" color="primary"></mat-progress-spinner>
+  <span>Chargement des congés…</span>
+</div>
+
+<p *ngIf="loadError" class="leave-error" role="alert">{{ loadError }}</p>
+
+<mat-card class="w-100" *ngIf="!loading">
   <mat-card-content>
     <div class="mat-lg-8">
 
@@ -88,8 +98,18 @@
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row leave-empty-row" *ngIf="!loadError && !loading && dataSource.data.length === 0">
+          <td class="mat-cell leave-empty-cell" [attr.colspan]="displayedColumns.length">
+            Aucun congé enregistré pour le moment. Utilisez « Ajouter » ou connectez-vous avec les comptes de démonstration.
+          </td>
+        </tr>
       </table>
       <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Sélectionner page"></mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>
+  </mat-tab>
+  <mat-tab label="Calendrier">
+    <app-leave-calendar [leaves]="leaveData" subtitle="Tous les employés (les chevauchements sont visibles sur chaque jour)."></app-leave-calendar>
+  </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,65 @@
+<section class="leave-cal" aria-label="Calendrier des congés">
+  <div class="leave-cal__header">
+    <div class="leave-cal__title-block">
+      <h2 class="leave-cal__title">Calendrier des congés</h2>
+      <p class="leave-cal__subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+      <p class="leave-cal__hint">
+        Les plages tiennent compte de la <strong>durée</strong> (jours ouvrés) et de la <strong>date de fin</strong> calculée comme sur le tableau.
+        Les congés qui se chevauchent apparaissent empilés avec une couleur par employé.
+      </p>
+    </div>
+    <div class="leave-cal__nav" role="toolbar" aria-label="Navigation du calendrier">
+      <button mat-stroked-button type="button" color="primary" (click)="prevMonth()" aria-label="Mois précédent">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button mat-stroked-button type="button" color="primary" (click)="goToday()" class="leave-cal__today">
+        Aujourd’hui
+      </button>
+      <span class="leave-cal__month" aria-live="polite">{{ monthTitle() }}</span>
+      <button mat-stroked-button type="button" color="primary" (click)="nextMonth()" aria-label="Mois suivant">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="leave-cal__legend" *ngIf="legend.length" role="list" aria-label="Légende des employés">
+    <span class="leave-cal__legend-title">Légende :</span>
+    <span class="leave-cal__chip" *ngFor="let item of legend" role="listitem">
+      <span class="leave-cal__dot" [style.background]="item.colors.bg" [style.border-color]="item.colors.border"></span>
+      {{ item.employe }}
+    </span>
+  </div>
+
+  <div class="leave-cal__grid" role="grid" [attr.aria-label]="'Mois affiché : ' + monthTitle()">
+    <div class="leave-cal__row leave-cal__row--head" role="row">
+      <div class="leave-cal__cell leave-cal__cell--head" *ngFor="let wd of weekDayLabels" role="columnheader">{{ wd }}</div>
+    </div>
+    <div class="leave-cal__row" *ngFor="let week of weeks; trackBy: trackWeek" role="row">
+      <div
+        class="leave-cal__cell"
+        *ngFor="let day of week"
+        [class.leave-cal__cell--muted]="!day.inMonth"
+        [class.leave-cal__cell--today]="day.isToday"
+        role="gridcell"
+        [attr.aria-label]="day.date | date : 'fullDate' : undefined : 'fr-FR'"
+      >
+        <div class="leave-cal__daynum">{{ day.date.getDate() }}</div>
+        <div class="leave-cal__stack">
+          <div
+            class="leave-cal__seg"
+            *ngFor="let s of day.segments"
+            [style.background]="s.colors.bg"
+            [style.color]="s.colors.fg"
+            [style.border-left-color]="s.colors.border"
+            [matTooltip]="
+              s.employe + ' — ' + s.raison + ' (' + s.statut + ') · ' + s.duree + ' j. · du ' + (s.debut | date : 'dd/MM/yyyy') + ' au ' + (s.fin | date : 'dd/MM/yyyy')
+            "
+            matTooltipShowDelay="200"
+          >
+            <span class="leave-cal__seg-name">{{ s.employe }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
