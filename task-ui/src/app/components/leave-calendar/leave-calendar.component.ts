@@ -4,7 +4,6 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import {
@@ -41,7 +40,7 @@ export interface LeaveCalendarDay {
   styleUrls: ['./leave-calendar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeaveCalendarComponent implements OnInit, OnChanges {
+export class LeaveCalendarComponent implements OnChanges {
   @Input() leaves: any[] = [];
 
   /** Libellé optionnel sous le titre (ex. filtre utilisateur). */
@@ -57,14 +56,17 @@ export class LeaveCalendarComponent implements OnInit, OnChanges {
     this.viewMonth = stripTime(new Date());
   }
 
-  ngOnInit(): void {
-    this.rebuild();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['leaves'] || changes['subtitle']) {
+      // Reporté pour éviter ExpressionChangedAfterItHasBeenChecked à l’ouverture de l’onglet MatTab.
+      this.scheduleRebuild();
+    }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['leaves']) {
+  private scheduleRebuild(): void {
+    setTimeout(() => {
       this.rebuild();
-    }
+    }, 0);
   }
 
   prevMonth(): void {
