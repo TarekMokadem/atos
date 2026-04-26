@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/User';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import { environment } from '../../environments/environment';
+import { API_BASE_URL } from '../../environments/api-base-url';
 
 @Injectable({
   providedIn: 'root',
@@ -156,7 +156,7 @@ export class UserService {
   }
 
 
-  private apiUrl = `${environment.apiUrl}/users`;
+  private apiUrl = `${API_BASE_URL}/users`;
 
   constructor(private http: HttpClient) { }
 

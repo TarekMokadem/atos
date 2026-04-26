@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { API_BASE_URL } from '../../environments/api-base-url';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StatutService {
-  private apiUrl = `${environment.apiUrl}/statut`;
+  private apiUrl = `${API_BASE_URL}/statut`;
 
   constructor(private http: HttpClient) { }
 

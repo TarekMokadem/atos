@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AccessDemande } from '../models/demande/AccessDemande';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { API_BASE_URL } from '../../environments/api-base-url';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class AccessDemandeService {
 
 
 
-  private dataUrl = `${environment.apiUrl}/access-requests`; 
+  private dataUrl = `${API_BASE_URL}/access-requests`; 
 
   constructor(private http: HttpClient) { 
     this.initializeAccessDemandes();

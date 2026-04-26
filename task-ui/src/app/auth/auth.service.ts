@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { environment } from '../../environments/environment';
+import { API_BASE_URL } from '../../environments/api-base-url';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = API_BASE_URL;
 
   constructor(private http: HttpClient, private router: Router, @Inject(JwtHelperService) private jwtHelper: JwtHelperService) {}
 

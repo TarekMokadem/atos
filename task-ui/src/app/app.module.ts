@@ -58,7 +58,7 @@ import {
 import {
   UserStatutLeaveDialogContentComponent
 } from "./admin-view-management/task-management/component/dialog-content-statut/statut-leave-dialog-content.component";
-import { environment } from '../environments/environment';
+import { API_BASE_URL } from '../environments/api-base-url';
 import { DemoBannerComponent } from './components/demo-banner/demo-banner.component';
 
 export function tokenGetter() {
@@ -107,10 +107,10 @@ export function tokenGetter() {
         JwtModule.forRoot({
           config: {
             tokenGetter: tokenGetter,
-            allowedDomains: [new URL(environment.apiUrl).host],
+            allowedDomains: [new URL(API_BASE_URL).host],
             disallowedRoutes: [
-              `${environment.apiUrl}/auth/login`,
-              `${environment.apiUrl}/auth/register`,
+              `${API_BASE_URL}/auth/login`,
+              `${API_BASE_URL}/auth/register`,
             ],
           },
         }),
