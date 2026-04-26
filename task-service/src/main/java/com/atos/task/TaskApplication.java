@@ -1,14 +1,8 @@
 package com.atos.task;
 
-//import com.atos.task.model.Employee;
-//import com.atos.task.repository.EmployeeRepository;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.util.NoSuchElementException;
 
 @SpringBootApplication
 public class TaskApplication {
@@ -17,18 +11,42 @@ public class TaskApplication {
         Dotenv dotenv = Dotenv.configure().directory("./task-service").ignoreIfMissing().load();
         dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 
+        // Aiven : mysql://... — Spring exige jdbc:mysql://... Les variables d'env Render sont visibles
+        // via System.getenv ; un EnvironmentPostProcessor seul peut ne pas être chargé selon l'empaquetage.
+        normalizeMysqlJdbcDataSourceUrl();
+
         SpringApplication.run(TaskApplication.class, args);
     }
-/*
-    @Bean
-    CommandLineRunner runner(EmployeeRepository employeeRepository){
-        return args -> {
-            Employee employee = new Employee();
-            employee.setNom("sa3id");
 
-            employeeRepository.save(employee);
-            Employee saved = employeeRepository.findById(employee.getId()).orElseThrow(NoSuchElementException::new);
-        };
-    }*/
+    private static void normalizeMysqlJdbcDataSourceUrl() {
+        String raw = firstNonBlank(
+                System.getenv("SPRING_DATASOURCE_URL"),
+                System.getProperty("SPRING_DATASOURCE_URL"),
+                System.getProperty("spring.datasource.url"));
+        if (raw == null || raw.isBlank() || raw.contains("${")) {
+            return;
+        }
+        String t = raw.trim();
+        if (t.startsWith("jdbc:")) {
+            return;
+        }
+        if (!t.startsWith("mysql://")) {
+            return;
+        }
+        String jdbc = "jdbc:" + t;
+        jdbc = jdbc.replace("ssl-mode=", "sslMode=").replace("SSL-MODE=", "sslMode=");
+        System.setProperty("spring.datasource.url", jdbc);
+    }
 
+    private static String firstNonBlank(String... values) {
+        if (values == null) {
+            return null;
+        }
+        for (String v : values) {
+            if (v != null && !v.isBlank()) {
+                return v;
+            }
+        }
+        return null;
+    }
 }
