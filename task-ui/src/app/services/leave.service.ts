@@ -20,8 +20,8 @@ export class LeaveService {
   createLeave(formData:any): Observable<any[]> {
     return this.http.post<any[]>(this.apiUrl,formData);
   }
-  editLeave(leave:any): Observable<any[]> {
-    return this.http.post<any[]>(this.apiUrl,leave);
+  editLeave(leave: unknown): Observable<unknown> {
+    return this.http.put<unknown>(this.apiUrl, leave);
   }
   deleteLeave(id:number): Observable<any[]> {
     return this.http.delete<any[]>(this.apiUrl+"/"+id);

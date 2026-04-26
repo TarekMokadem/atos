@@ -109,16 +109,33 @@ export class AdminLeaveManagementComponent implements OnInit, AfterViewInit {
   }
 
   acceptLeave(data: LeaveData) {
-    data.statut = 'Accepté';
-    this.leaveService.editLeave(data).subscribe(() => {
+    const payload = this.toLeaveUpdatePayload({ ...data, statut: 'Accepté' });
+    this.leaveService.editLeave(payload).subscribe(() => {
       this.refreshLeaves();
     });
   }
   denyLeave(data: LeaveData) {
-    data.statut = 'Refusé';
-    this.leaveService.editLeave(data).subscribe(() => {
+    const payload = this.toLeaveUpdatePayload({ ...data, statut: 'Refusé' });
+    this.leaveService.editLeave(payload).subscribe(() => {
       this.refreshLeaves();
     });
+  }
+
+  private toLeaveUpdatePayload(data: LeaveData): Record<string, unknown> {
+    const jour = data.jour instanceof Date ? data.jour.toISOString() : data.jour;
+    const dateDemande =
+      data.dateDemande instanceof Date
+        ? data.dateDemande.toISOString()
+        : data.dateDemande;
+    return {
+      id: data.id,
+      employe: data.employe,
+      jour,
+      duree: data.duree,
+      raison: data.raison,
+      statut: data.statut,
+      dateDemande,
+    };
   }
 
 

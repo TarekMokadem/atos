@@ -29,17 +29,16 @@ export class LeaveDialogContentComponent {
   submitForm() {
     if (this.leaveForm.valid) {
       const formData = this.leaveForm.value;
-      // Convertir la durée en nombre
       const duree = Number(formData.duree);
-      // Créer un nouvel objet Date à partir de la date de début
-      const dateDebut = new Date(formData.jour);
-      // Ajouter la durée à la date de début pour obtenir la date de fin
-      const dateFin = new Date(dateDebut);
-      dateFin.setDate(dateDebut.getDate() + duree);
-      // Ajouter la date de fin au formData
-      formData.dateFin = dateFin.toISOString();
-      console.log('Form data:', formData); // Log form data
-      this.leaveService.createLeave(formData).subscribe(response => {
+      const payload = {
+        employe: formData.employe,
+        jour: new Date(formData.jour).toISOString(),
+        duree,
+        raison: formData.raison,
+        statut: formData.statut,
+        dateDemande: new Date(formData.dateDemande).toISOString(),
+      };
+      this.leaveService.createLeave(payload).subscribe(response => {
         console.log('Response:', response); // Log response
         this.dialog.closeAll();
       }, error => {
