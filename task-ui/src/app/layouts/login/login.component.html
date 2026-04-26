@@ -27,6 +27,28 @@
 
 <h1 class="title">CONNEXION</h1>
 
+<div *ngIf="demoMode" class="demo-accounts-wrap">
+  <mat-card class="demo-accounts-card">
+    <mat-card-title>Comptes de démonstration</mat-card-title>
+    <mat-card-subtitle>Données fictives — application de démo réalisée dans le cadre d’une expérience chez Atos.</mat-card-subtitle>
+    <mat-card-content>
+      <div class="demo-account-block">
+        <p class="demo-account-label">{{ demoAccounts.admin.label }}</p>
+        <p><span class="demo-k">E-mail</span> <code>{{ demoAccounts.admin.email }}</code></p>
+        <p><span class="demo-k">Mot de passe</span> <code>{{ demoAccounts.admin.password }}</code></p>
+        <button mat-stroked-button type="button" color="primary" (click)="applyDemo('admin')">Remplir le formulaire (admin)</button>
+      </div>
+      <div class="demo-divider" role="separator"></div>
+      <div class="demo-account-block">
+        <p class="demo-account-label">{{ demoAccounts.user.label }}</p>
+        <p><span class="demo-k">E-mail</span> <code>{{ demoAccounts.user.email }}</code></p>
+        <p><span class="demo-k">Mot de passe</span> <code>{{ demoAccounts.user.password }}</code></p>
+        <button mat-stroked-button type="button" color="primary" (click)="applyDemo('user')">Remplir le formulaire (utilisateur)</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
 <!-- Form Layout -->
 <div style="margin: 5% 30% 5% 30%;" class="card">
   <div class="card-body" >

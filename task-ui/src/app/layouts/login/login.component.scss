@@ -52,3 +52,50 @@
 .card-body {
   padding: 10% 15% 10% 15%;
 }
+
+.demo-accounts-wrap {
+  margin: 0 18% 1.5rem;
+}
+
+.demo-accounts-card {
+  border: 1px solid rgba(0, 156, 244, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.demo-accounts-card .mat-mdc-card-title {
+  font-size: 1.15rem;
+  color: #009cf4;
+}
+
+.demo-account-block {
+  margin-top: 0.75rem;
+}
+
+.demo-account-label {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.demo-k {
+  display: inline-block;
+  min-width: 6.5rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+}
+
+.demo-accounts-card code {
+  font-size: 0.9rem;
+  background: rgba(0, 156, 244, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.demo-divider {
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 1.25rem 0;
+}
+
+.demo-account-block button {
+  margin-top: 0.75rem;
+}

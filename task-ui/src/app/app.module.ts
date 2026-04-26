@@ -59,6 +59,7 @@ import {
   UserStatutLeaveDialogContentComponent
 } from "./admin-view-management/task-management/component/dialog-content-statut/statut-leave-dialog-content.component";
 import { environment } from '../environments/environment';
+import { DemoBannerComponent } from './components/demo-banner/demo-banner.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -86,7 +87,8 @@ export function tokenGetter() {
     UserLeaveDialogContentComponent,
     UserLivraisonComponent,
     UserResponsableLeaveDialogContentComponent,
-    UserStatutLeaveDialogContentComponent
+    UserStatutLeaveDialogContentComponent,
+    DemoBannerComponent
   ],
     imports: [
         MatDialogModule,

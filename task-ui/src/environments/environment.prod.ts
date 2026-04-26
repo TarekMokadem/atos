@@ -5,4 +5,17 @@ export const environment = {
    * Rebuild le frontend après modification.
    */
   apiUrl: 'https://VOTRE-API-PUBLIQUE.onrender.com/api/v1',
+  demoMode: true,
+  demoAccounts: {
+    admin: {
+      label: 'Administrateur (toutes les fonctions)',
+      email: 'demo.admin@atos.fr',
+      password: 'DemoAdmin2026!',
+    },
+    user: {
+      label: 'Utilisateur (vue métier)',
+      email: 'demo.user@atos.fr',
+      password: 'DemoUser2026!',
+    },
+  },
 };
