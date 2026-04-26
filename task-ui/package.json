@@ -39,6 +39,7 @@
     "ngx-intl-tel-input-gg": "^1.0.12",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.5"
   },
   "devDependencies": {

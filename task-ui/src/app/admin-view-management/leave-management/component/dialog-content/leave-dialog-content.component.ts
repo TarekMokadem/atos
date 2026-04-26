@@ -9,7 +9,7 @@ import {LeaveService} from "../../../../services/leave.service";
 @Component({
   selector: 'app-dialog-content',
   templateUrl: './leave-dialog-content.component.html',
-  styleUrl: './responsable-statut-leave-dialog-content.component.scss'
+  styleUrl: './leave-dialog-content.component.scss'
 })
 export class LeaveDialogContentComponent {
 
