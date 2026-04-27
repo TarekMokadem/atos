@@ -86,3 +86,17 @@ mat-form-field.date {
   font-size: 1.6rem;
   overflow: visible;
 }
+
+.task-inline-selects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.task-inline-select {
+  min-width: 10rem;
+  max-width: 18rem;
+  flex: 1 1 auto;
+}

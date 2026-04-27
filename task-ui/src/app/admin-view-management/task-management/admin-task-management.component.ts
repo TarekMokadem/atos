@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -6,10 +15,8 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {MatDialog} from "@angular/material/dialog";
 import {TaskDialogContentComponent} from "./component/dialog-content/task-dialog-content.component";
 import * as xls from 'xlsx';
-import {HttpClient} from "@angular/common/http";
-import {forkJoin, Observable} from "rxjs";
+import {forkJoin} from "rxjs";
 import {TaskService} from "../../services/task.service";
-import {AuthService} from "../../auth/auth.service";
 import {
   UserStatutLeaveDialogContentComponent
 } from "./component/dialog-content-statut/statut-leave-dialog-content.component";
@@ -26,9 +33,7 @@ import {StatutService} from "../../services/statut.service";
   styleUrl: './admin-task-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AdminTaskManagementComponent implements AfterViewInit {
-  selectedResponsable = '';
-  selectedStatut = '';
+export class AdminTaskManagementComponent implements OnInit, AfterViewInit {
   fileName = '';
   taskData: any[] = [];
   excelFileTasks: any;
@@ -117,71 +122,63 @@ export class AdminTaskManagementComponent implements AfterViewInit {
   }
 
 
-  constructor(private taskService: TaskService, private responsableService: ResponsableService, private statutService: StatutService) {
-    console.log(this.displayedColumns);
-    // Assign the data to the data source for the table to render
+  constructor(
+    private taskService: TaskService,
+    private responsableService: ResponsableService,
+    private statutService: StatutService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
     this.dataSource = new MatTableDataSource();
-
     this.range.value.start = new Date('01/01/1970');
   }
 
   ngOnInit() {
-    this.taskService.getTasks().subscribe(data => {
-      console.log(data.map((item: any) => {
-        return item
-      }));
-      this.dataSource = new MatTableDataSource(data);
-      this.taskData = data.map((item: any) => {
-        // item.devTig == null ? item.devTig : item.devTig = (new Date(item.devTig).getDate()).toString().padStart(2, '0') + "/" + ((new Date(item.devTig).getMonth() + 1).toString().padStart(2, '0')) + "/" + new Date(item.devTig).getFullYear()
-        // item.livraisonTig == null ? item.livraisonTig : item.livraisonTig = (new Date(item.livraisonTig).getDate()).toString().padStart(2, '0') + "/" + ((new Date(item.livraisonTig).getMonth() + 1).toString().padStart(2, '0')) + "/" + new Date(item.livraisonTig).getFullYear()
-        // item.dateReponse == null ? item.dateReponse : item.dateReponse = (new Date(item.dateReponse).getDate()).toString().padStart(2, '0') + "/" + ((new Date(item.dateReponse).getMonth() + 1).toString().padStart(2, '0')) + "/" + new Date(item.dateReponse).getFullYear();
-        return item
-      })
+    this.reloadGridData();
+  }
 
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+  /** Charge tâches + listes référentiel sans dupliquer les tableaux à chaque appel. */
+  private reloadGridData(): void {
+    forkJoin({
+      tasks: this.taskService.getTasks(),
+      responsables: this.responsableService.getResponsables(),
+      statuts: this.statutService.getStatuts(),
+    }).subscribe({
+      next: ({ tasks, responsables, statuts }) => {
+        this.ResponsableDB = (responsables ?? []).map((r: { name?: string }) => r.name).filter((n): n is string => !!n && String(n).trim() !== '');
+        this.StatutDB = (statuts ?? []).map((s: { name?: string }) => s.name).filter((n): n is string => !!n && String(n).trim() !== '');
 
-      this.Responsables = this.taskData
-        .map(task => task.responsable) // Extraire les valeurs de 'responsable'
-        .filter((value, index, self) => self.indexOf(value) === index); // Éliminer les doublons
-      console.log(this.Responsables);
-      this.Types = this.taskData
-        .map(task => task.type) // Extraire les valeurs de 'type'
-        .filter((value, index, self) => self.indexOf(value) === index); // Éliminer les doublons
-      console.log(this.Types);
-      this.Statuts = this.taskData
-        .map(task => task.statut) // Extraire les valeurs de 'statut'
-        .filter((value, index, self) => self.indexOf(value) === index); // Éliminer les doublons
-      console.log(this.Statuts);
+        this.dataSource = new MatTableDataSource<TaskData>(tasks as TaskData[]);
+        this.taskData = (tasks as TaskData[]).map((item) => ({ ...item }));
 
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
+        const respFromTasks = this.taskData.map((t) => t.responsable);
+        const statFromTasks = this.taskData.map((t) => t.statut);
+        const typesFromTasks = this.taskData.map((t) => t.type);
+
+        this.Responsables = this.mergeUniqueStrings(this.ResponsableDB, respFromTasks);
+        this.Statuts = this.mergeUniqueStrings(this.StatutDB, statFromTasks);
+        this.Types = this.mergeUniqueStrings([], typesFromTasks);
+
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Chargement tâches / référentiels', err),
     });
+  }
 
-
-    this.responsableService.getResponsables().subscribe(data => {
-      console.log(data);
-      data.forEach((item: any) => {
-        this.ResponsableDB.push(item.name);
-        console.log(this.ResponsableDB);
-      });
+  private mergeUniqueStrings(base: string[], extra: (string | null | undefined)[]): string[] {
+    const set = new Set<string>(base.map((s) => String(s).trim()).filter(Boolean));
+    extra.forEach((v) => {
+      if (v != null && String(v).trim() !== '') {
+        set.add(String(v).trim());
+      }
     });
-
-    this.statutService.getStatuts().subscribe(data => {
-      console.log(data);
-      data.forEach((item: any) => {
-        this.StatutDB.push(item.name);
-        console.log(item.name);
-      });
-    });
-
-    console.log(this.taskData);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'fr'));
   }
 
   getTasks() {
-    this.taskService.getTasks().subscribe(data => {
-      console.log(data);
-      this.dataSource = new MatTableDataSource(data);
-      this.taskData = data;
-    });
+    this.reloadGridData();
   }
 
   getTaskById(id: number) {
@@ -219,9 +216,7 @@ export class AdminTaskManagementComponent implements AfterViewInit {
       "ast": row.ast ? row.ast.valueOf() : null,
       "commentaire": row.commentaire
     };
-    console.log(this.selectedStatut + " et " + this.selectedResponsable);
-
-    this.taskService.editTask(task).subscribe(data => {
+    this.taskService.editTask(task).subscribe(() => {
       this.ngOnInit();
     });
   }
@@ -247,9 +242,9 @@ export class AdminTaskManagementComponent implements AfterViewInit {
 
   ticketForm = new FormControl('');
   descriptionForm = new FormControl('');
-  typeSelectForm = new FormControl('');
-  statutSelectForm = new FormControl('');
-  responsableSelectForm = new FormControl('');
+  typeSelectForm = new FormControl<string[]>([]);
+  statutSelectForm = new FormControl<string[]>([]);
+  responsableSelectForm = new FormControl<string[]>([]);
   dateReponseDatePicker = new FormControl('');
 
   stringDateFormat(date: string): Date {
@@ -269,11 +264,20 @@ export class AdminTaskManagementComponent implements AfterViewInit {
 
       const ticketMatch = data.ticket ? data.ticket.toLowerCase().includes(this.ticketForm.value ? this.ticketForm.value : '') : true;
       const descriptionMatch = data.description ? data.description.toLowerCase().includes(this.descriptionForm.value ? this.descriptionForm.value : '') : true;
-      const typeMatch = this.typeSelectForm.value!.length > 0 ? this.typeSelectForm.value!.includes(data.type) : true;
-      const statutMatch = this.statutSelectForm.value!.length > 0 ? this.statutSelectForm.value!.includes(data.statut) : true;
-      const responsableMatch = this.responsableSelectForm.value!.length > 0 ? this.responsableSelectForm.value!.includes(data.responsable) : true;
+      const typeSel = this.typeSelectForm.value ?? [];
+      const statutSel = this.statutSelectForm.value ?? [];
+      const respSel = this.responsableSelectForm.value ?? [];
+      const typeMatch = typeSel.length > 0 ? typeSel.includes(data.type) : true;
+      const statutMatch = statutSel.length > 0 ? statutSel.includes(data.statut ?? '') : true;
+      const responsableMatch = respSel.length > 0 ? respSel.includes(data.responsable ?? '') : true;
 
-      const dateResponse = this.stringDateFormat(data.Date_reponse);
+      const dr = data.dateReponse;
+      const dateResponse =
+        dr instanceof Date
+          ? dr
+          : dr
+            ? this.stringDateFormat(String(dr))
+            : new Date('01/01/1970');
       const dateRaponseMatch = this.range.value.start !== null ? dateResponse >= dateReponseStart && dateResponse <= dateReponseEnd : true;
 
       return ticketMatch && descriptionMatch && typeMatch && statutMatch && responsableMatch && dateRaponseMatch;
@@ -344,10 +348,6 @@ export class AdminTaskManagementComponent implements AfterViewInit {
     devTig: new FormControl<Date | null>(null),
     livraisonTig: new FormControl<Date | null>(null),
     dateReponse: new FormControl<Date | null>(null),
-  });
-  readonly selectGroup = new FormGroup({
-    statut: new FormControl<string | null>(null),
-    responsable: new FormControl<string | null>(null),
   });
 }
 

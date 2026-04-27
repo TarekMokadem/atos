@@ -30,23 +30,22 @@
   <div class="ps-32"></div>
   <mat-form-field>
     <mat-label>Type</mat-label>
-    <mat-select [formControl]="typeSelectForm" multiple>
-      <mat-option (click)="applyFilters()" *ngFor="let type of Types" [value]="type">{{type}}</mat-option>
+    <mat-select [formControl]="typeSelectForm" multiple (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let type of Types" [value]="type">{{type}}</mat-option>
     </mat-select>
   </mat-form-field>
   <div class="ps-32"></div>
   <mat-form-field>
     <mat-label>Statut</mat-label>
-    <mat-select [formControl]="statutSelectForm" multiple>
-      <mat-option (click)="applyFilters()" *ngFor="let statut of Statuts" [value]="statut">{{statut}}</mat-option>
+    <mat-select [formControl]="statutSelectForm" multiple (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let statut of Statuts" [value]="statut">{{statut}}</mat-option>
     </mat-select>
   </mat-form-field>
   <div class="ps-32"></div>
   <mat-form-field>
     <mat-label>Responsable</mat-label>
-    <mat-select [formControl]="responsableSelectForm" multiple>
-      <mat-option (click)="applyFilters()" *ngFor="let responsable of Responsables"
-                  [value]="responsable">{{responsable}}</mat-option>
+    <mat-select [formControl]="responsableSelectForm" multiple (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let responsable of Responsables" [value]="responsable">{{responsable}}</mat-option>
     </mat-select>
   </mat-form-field>
   <div class="ps-32"></div>
@@ -95,17 +94,16 @@
                   [(ngModel)]="element[column]">
         </textarea>
 
-        <div [formGroup]="selectGroup" style="width:150%; display: flex">
-
-          <mat-form-field *ngIf="element.editMode && column =='statut'">
-            <mat-label>Select</mat-label>
-            <mat-select [(value)]="selectedStatut" formControlName="statut" multiple>
+        <div class="task-inline-selects" *ngIf="element.editMode && (column === 'statut' || column === 'responsable')">
+          <mat-form-field *ngIf="column === 'statut'" appearance="outline" class="task-inline-select">
+            <mat-label>Statut</mat-label>
+            <mat-select [(ngModel)]="element.statut" [ngModelOptions]="{standalone: true}">
               <mat-option *ngFor="let statut of StatutDB" [value]="statut">{{statut}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field *ngIf="element.editMode && column =='responsable'">
-            <mat-label>Select</mat-label>
-            <mat-select [(value)]="element.responsable" formControlName="responsable" multiple>
+          <mat-form-field *ngIf="column === 'responsable'" appearance="outline" class="task-inline-select">
+            <mat-label>Responsable</mat-label>
+            <mat-select [(ngModel)]="element.responsable" [ngModelOptions]="{standalone: true}">
               <mat-option *ngFor="let responsable of ResponsableDB" [value]="responsable">{{responsable}}</mat-option>
             </mat-select>
           </mat-form-field>
