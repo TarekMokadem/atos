@@ -9,4 +9,5 @@ export const environment = {
   apiUrl: 'https://VOTRE-API-PUBLIQUE.onrender.com/api/v1',
   demoMode: showDemoChrome,
   demoAccounts,
+  serverKeepAlive: true,
 };

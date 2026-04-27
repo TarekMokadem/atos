@@ -12,3 +12,16 @@ export function normalizeApiBaseUrl(apiUrl: string | undefined | null): string {
   }
   return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
 }
+
+/** URL `/actuator/health` à partir de la base `/api/v1` (même origine que l’API). */
+export function actuatorHealthUrlFromApiBase(apiBaseV1Url: string): string {
+  if (apiBaseV1Url == null || typeof apiBaseV1Url !== 'string') {
+    return '';
+  }
+  const trimmed = apiBaseV1Url.trim().replace(/\/+$/, '');
+  if (!trimmed) {
+    return '';
+  }
+  const origin = trimmed.replace(/\/api\/v1\/?$/i, '');
+  return `${origin}/actuator/health`;
+}
