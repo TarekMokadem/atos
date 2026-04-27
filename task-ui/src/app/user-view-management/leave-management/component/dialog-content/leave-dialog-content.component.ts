@@ -8,7 +8,7 @@ import {LeaveService} from "../../../../services/leave.service";
 import {AuthService} from "../../../../auth/auth.service";
 
 @Component({
-  selector: 'app-dialog-content',
+  selector: 'app-user-leave-dialog',
   templateUrl: './leave-dialog-content.component.html',
   styleUrl: './leave-dialog-content.component.scss'
 })

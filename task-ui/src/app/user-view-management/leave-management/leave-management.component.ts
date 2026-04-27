@@ -84,7 +84,7 @@ export class LeaveManagementComponent implements OnInit, AfterViewInit {
           const fn = (users?.firstname ?? '').toString().trim();
           const ln = (users?.lastname ?? '').toString().trim();
           const full = `${fn} ${ln}`.trim().toLowerCase();
-          this.calendarSubtitle = full
+          const subtitle = full
             ? `Vos congés (profil : ${fn}${ln ? ' ' + ln : ''}).`
             : 'Vos congés et demandes.';
           return this.leaveService.getLeaves().pipe(
@@ -97,19 +97,21 @@ export class LeaveManagementComponent implements OnInit, AfterViewInit {
                   (ln && emp === `${fn} ${ln}`.toLowerCase())
                 );
               })
-            )
+            ),
+            map((filteredData: LeaveData[]) => ({ filteredData, subtitle }))
           );
         }),
         catchError(() => {
           this.loadError = 'Impossible de charger vos congés.';
-          return of([] as LeaveData[]);
+          return of({ filteredData: [] as LeaveData[], subtitle: 'Vos congés et demandes.' });
         }),
         finalize(() => {
           this.loading = false;
           this.cdr.markForCheck();
         })
       )
-      .subscribe((filteredData: LeaveData[]) => {
+      .subscribe(({ filteredData, subtitle }) => {
+        this.calendarSubtitle = subtitle;
         this.dataSource = new MatTableDataSource<LeaveData>(filteredData);
         this.leaveData = filteredData.map((item: any) => {
           item.jour = new Date(item.jour);

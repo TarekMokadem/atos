@@ -1,9 +1,9 @@
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="statutForm" (ngSubmit)="submitForm()">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Nom</mat-label>
-      <input matInput placeholder="Nom" formControlName="nom">
+    <mat-form-field appearance="outline" class="statut-dialog-field">
+      <mat-label>Nom du statut</mat-label>
+      <input matInput placeholder="Ex. En cours" formControlName="nom" autocomplete="off">
     </mat-form-field>
 
     <div class="d-flex" style="justify-content: space-around">

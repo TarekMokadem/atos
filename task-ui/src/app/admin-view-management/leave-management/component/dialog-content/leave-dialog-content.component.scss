@@ -1,8 +1,22 @@
-form {
-  padding: 0 20%;
+:host {
+  display: block;
 }
-.dialog-content{
 
-  padding: 5% 0;
+.dialog-content {
+  padding: 1rem 1.25rem;
   max-height: 90vh;
+  min-width: min(100%, 28rem);
+  box-sizing: border-box;
+}
+
+form .d-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+form mat-form-field {
+  flex: 1 1 12rem;
+  min-width: 11rem;
 }

@@ -64,9 +64,9 @@ export class LeaveCalendarComponent implements OnChanges {
   }
 
   private scheduleRebuild(): void {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.rebuild();
-    }, 0);
+    });
   }
 
   prevMonth(): void {

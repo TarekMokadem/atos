@@ -7,7 +7,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {LeaveService} from "../../../../services/leave.service";
 
 @Component({
-  selector: 'app-dialog-content',
+  selector: 'app-admin-leave-dialog',
   templateUrl: './leave-dialog-content.component.html',
   styleUrl: './leave-dialog-content.component.scss'
 })

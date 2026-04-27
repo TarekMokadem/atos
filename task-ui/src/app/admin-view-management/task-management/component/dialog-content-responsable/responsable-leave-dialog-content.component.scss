@@ -1,9 +1,14 @@
-form {
-  padding: 0 10%;
-  width: 100%;
+:host {
+  display: block;
 }
-.dialog-content{
 
-  padding: 10% 0;
+.dialog-content {
+  padding: 1rem 1.25rem;
   max-height: 90vh;
+  min-width: min(100%, 22rem);
+  box-sizing: border-box;
+}
+
+.responsable-dialog-field {
+  width: 100%;
 }
