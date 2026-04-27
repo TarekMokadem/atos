@@ -20,8 +20,8 @@ export class ResponsableService {
   createResponsable(formData:any): Observable<any[]> {
     return this.http.post<any[]>(this.apiUrl,formData);
   }
-  editResponsable(leave:any): Observable<any[]> {
-    return this.http.post<any[]>(this.apiUrl,leave);
+  editResponsable(responsable: { id: number; name: string }): Observable<unknown> {
+    return this.http.put<unknown>(this.apiUrl, responsable);
   }
   deleteRespnsable(id:number): Observable<any[]> {
     return this.http.delete<any[]>(this.apiUrl+"/"+id);

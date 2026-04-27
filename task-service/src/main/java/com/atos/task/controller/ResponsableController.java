@@ -47,22 +47,26 @@ public class ResponsableController {
 
     @PutMapping("/responsable")
     public ResponseEntity<Responsable> editTask(@RequestBody Responsable responsable) {
-        Responsable existingResponsable = responsableService.findByName(responsable.getName());
-        if (existingResponsable == null) {
-            return ResponseEntity.notFound().build();
+        if (responsable.getId() == null) {
+            return ResponseEntity.badRequest().build();
         }
-        existingResponsable.setName(responsable.getName());
-        responsableService.create(existingResponsable);
-        return ResponseEntity.ok(existingResponsable);
+        return responsableService.findById(responsable.getId())
+                .map(existing -> {
+                    if (responsable.getName() != null) {
+                        existing.setName(responsable.getName());
+                    }
+                    return ResponseEntity.ok(responsableService.create(existing));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/responsable/{id}")
-    public void deleteTask(@PathVariable Long id){
-        try{
-
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        try {
             responsableService.deleteById(id);
-        } catch (Exception e){
-             new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

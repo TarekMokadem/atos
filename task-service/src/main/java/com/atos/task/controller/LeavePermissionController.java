@@ -82,12 +82,12 @@ public class LeavePermissionController {
     }
 
     @DeleteMapping("/leaves/{id}")
-    public void deleteLeave(@PathVariable Long id){
-        try{
-
-             leavePermissionService.deleteById(id);
-        } catch (Exception e){
-             new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Void> deleteLeave(@PathVariable Long id) {
+        try {
+            leavePermissionService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

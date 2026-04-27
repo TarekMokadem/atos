@@ -6,7 +6,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -48,22 +47,26 @@ public class StatutController {
 
     @PutMapping("/statut")
     public ResponseEntity<Statut> editTask(@RequestBody Statut statut) {
-        Statut existingStatut = statutService.findByName(statut.getName());
-        if (existingStatut == null) {
-            return ResponseEntity.notFound().build();
+        if (statut.getId() == null) {
+            return ResponseEntity.badRequest().build();
         }
-        existingStatut.setName(statut.getName());
-        statutService.create(existingStatut);
-        return ResponseEntity.ok(existingStatut);
+        return statutService.findById(statut.getId())
+                .map(existing -> {
+                    if (statut.getName() != null) {
+                        existing.setName(statut.getName());
+                    }
+                    return ResponseEntity.ok(statutService.create(existing));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/statut/{id}")
-    public void deleteTask(@PathVariable Long id){
-        try{
-
-             statutService.deleteById(id);
-        } catch (Exception e){
-             new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        try {
+            statutService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

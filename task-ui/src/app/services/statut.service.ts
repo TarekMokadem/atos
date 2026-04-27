@@ -20,8 +20,8 @@ export class StatutService {
   createStatut(formData:any): Observable<any[]> {
     return this.http.post<any[]>(this.apiUrl,formData);
   }
-  editStatut(leave:any): Observable<any[]> {
-    return this.http.post<any[]>(this.apiUrl,leave);
+  editStatut(statut: { id: number; name: string }): Observable<unknown> {
+    return this.http.put<unknown>(this.apiUrl, statut);
   }
   deleteStatut(id:number): Observable<any[]> {
     return this.http.delete<any[]>(this.apiUrl+"/"+id);
