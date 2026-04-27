@@ -23,7 +23,9 @@ public class CorsConfig {
                 .collect(Collectors.toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(origins);
+        // OriginPatterns (et non allowedOrigins seuls) : permet les motifs du type https://*.pages.dev
+        // pour Cloudflare Pages (déploiements prod et preview) avec allowCredentials(true).
+        configuration.setAllowedOriginPatterns(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
