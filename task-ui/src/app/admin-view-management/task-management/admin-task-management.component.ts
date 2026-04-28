@@ -295,9 +295,9 @@ export class AdminTaskManagementComponent implements OnInit, AfterViewInit {
   clearFilters() {
     // Reset form controls
     this.ticketForm.reset('');
-    this.typeSelectForm.reset('');
-    this.statutSelectForm.reset('');
-    this.responsableSelectForm.reset('');
+    this.typeSelectForm.setValue([]);
+    this.statutSelectForm.setValue([]);
+    this.responsableSelectForm.setValue([]);
     this.dateReponseDatePicker.reset('');
     this.range.reset();
     this.descriptionForm.reset('');
