@@ -7,6 +7,11 @@ import { API_BASE_URL } from '../../environments/api-base-url';
 import { actuatorHealthUrlFromApiBase } from '../../environments/normalize-api-base-url';
 import { environment } from '../../environments/environment';
 
+/** Cloudflare Pages réécrit souvent `environment.prod.ts` avec seulement `production` + `apiUrl`. */
+function isServerKeepAliveDisabled(env: typeof environment): boolean {
+  return (env as { serverKeepAlive?: boolean }).serverKeepAlive === false;
+}
+
 const INTERVAL_MS = 60_000;
 const QUIET_START_HOUR_PARIS = 0;
 const QUIET_END_HOUR_PARIS = 7;
@@ -23,7 +28,7 @@ export class ServerKeepAliveService {
   constructor(private readonly http: HttpClient) {}
 
   start(): void {
-    if (this.sub || environment.serverKeepAlive === false) {
+    if (this.sub || isServerKeepAliveDisabled(environment)) {
       return;
     }
     const healthUrl = actuatorHealthUrlFromApiBase(API_BASE_URL);
