@@ -8,17 +8,20 @@
 # Branche : les workflows `schedule` ne tournent que sur la branche PAR DÉFAUT du dépôt.
 # Si ta branche par défaut est `main`, merge ce fichier sur `main` ou change la branche par défaut.
 #
-# Note GitHub Actions : l’événement `schedule` peut être retardé en période de forte charge ;
-# la granularité cron est la minute, mais ce n’est pas une horloge temps réel. Pour une
-# cadence garantie à la minute 24h/24, utiliser en complément un service externe (cron-job.org,
-# UptimeRobot, etc.) pointant vers la même URL.
+# GitHub peut espacer les runs d’un seul cron `* * * * *`. Cinq crons décalés (minutes % 5)
+# couvrent chaque minute de l’heure tout en restant dans les limites habituelles des dépôts.
+# Attention : ~1440 exécutions/jour consomment des minutes Actions (quota du compte).
+# Pour une horloge stricte hors GitHub : cron-job.org, UptimeRobot, etc.
 
 name: Render keep-alive
 
 on:
   schedule:
-    # Chaque minute (UTC) — exécution réelle peut être décalée de quelques minutes par GitHub
-    - cron: "* * * * *"
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 * * * *"
+    - cron: "1,6,11,16,21,26,31,36,41,46,51,56 * * * *"
+    - cron: "2,7,12,17,22,27,32,37,42,47,52,57 * * * *"
+    - cron: "3,8,13,18,23,28,33,38,43,48,53,58 * * * *"
+    - cron: "4,9,14,19,24,29,34,39,44,49,54,59 * * * *"
   workflow_dispatch:
 
 concurrency:
