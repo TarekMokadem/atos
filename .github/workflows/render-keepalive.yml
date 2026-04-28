@@ -34,9 +34,19 @@ jobs:
           KEEPALIVE_URL: ${{ secrets.RENDER_KEEPALIVE_URL }}
         run: |
           set -e
-          if [ -z "$KEEPALIVE_URL" ]; then
+          if [ -z "${KEEPALIVE_URL:-}" ]; then
             echo "Secret RENDER_KEEPALIVE_URL absent — rien à appeler (configurez-le dans les secrets du dépôt)."
             exit 0
+          fi
+          # Nettoyer retours ligne / espaces (cause fréquente de curl: (3) Malformed URL)
+          url="$(printf '%s' "$KEEPALIVE_URL" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          url="${url#\"}"
+          url="${url%\"}"
+          url="${url#<}"
+          url="${url%>}"
+          if ! printf '%s' "$url" | grep -qE '^https?://[^[:space:]]+$'; then
+            echo "RENDER_KEEPALIVE_URL invalide après nettoyage (attendu: https://... sans espace ni guillemets). Longueur=${#url}"
+            exit 1
           fi
           hour="$(TZ=Europe/Paris date +%H)"
           hour="$((10#$hour))"
@@ -44,5 +54,5 @@ jobs:
             echo "Plage silencieuse Europe/Paris (00h00–06h59), pas de requête."
             exit 0
           fi
-          echo "Ping $KEEPALIVE_URL (heure Paris=$hour)"
-          curl -fsS --max-time 60 --retry 2 --retry-delay 5 "$KEEPALIVE_URL"
+          echo "Ping keep-alive (heure Paris=$hour, longueur URL=${#url})"
+          curl -fsS --max-time 60 --retry 2 --retry-delay 5 -- "$url"
