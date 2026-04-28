@@ -1,0 +1,45 @@
+# Réveille le backend Render (ex. free tier) via GET sur une URL publique.
+#
+# Configuration (Settings → Secrets and variables → Actions) :
+#   RENDER_KEEPALIVE_URL = URL complète, ex. https://VOTRE-SERVICE.onrender.com/actuator/health
+#
+# Horaires : aucun ping entre minuit et 7h (Europe/Paris), comme le keep-alive côté Angular.
+#
+# Note GitHub Actions : l’événement `schedule` peut être retardé en période de forte charge ;
+# la granularité cron est la minute, mais ce n’est pas une horloge temps réel. Pour une
+# cadence garantie à la minute 24h/24, utiliser en complément un service externe (cron-job.org,
+# UptimeRobot, etc.) pointant vers la même URL.
+
+name: Render keep-alive
+
+on:
+  schedule:
+    # Chaque minute (UTC) — exécution réelle peut être décalée de quelques minutes par GitHub
+    - cron: "* * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: render-keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET santé (hors 0h–7h heure de Paris)
+        env:
+          KEEPALIVE_URL: ${{ secrets.RENDER_KEEPALIVE_URL }}
+        run: |
+          set -e
+          if [ -z "$KEEPALIVE_URL" ]; then
+            echo "Secret RENDER_KEEPALIVE_URL absent — rien à appeler (configurez-le dans les secrets du dépôt)."
+            exit 0
+          fi
+          hour="$(TZ=Europe/Paris date +%H)"
+          hour="$((10#$hour))"
+          if [ "$hour" -ge 0 ] && [ "$hour" -lt 7 ]; then
+            echo "Plage silencieuse Europe/Paris (00h00–06h59), pas de requête."
+            exit 0
+          fi
+          echo "Ping $KEEPALIVE_URL (heure Paris=$hour)"
+          curl -fsS --max-time 60 --retry 2 --retry-delay 5 "$KEEPALIVE_URL"
