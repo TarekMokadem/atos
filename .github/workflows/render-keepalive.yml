@@ -5,6 +5,9 @@
 #
 # Horaires : aucun ping entre minuit et 7h (Europe/Paris), comme le keep-alive côté Angular.
 #
+# Branche : les workflows `schedule` ne tournent que sur la branche PAR DÉFAUT du dépôt.
+# Si ta branche par défaut est `main`, merge ce fichier sur `main` ou change la branche par défaut.
+#
 # Note GitHub Actions : l’événement `schedule` peut être retardé en période de forte charge ;
 # la granularité cron est la minute, mais ce n’est pas une horloge temps réel. Pour une
 # cadence garantie à la minute 24h/24, utiliser en complément un service externe (cron-job.org,
