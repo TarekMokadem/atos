@@ -1,9 +1,14 @@
 # Réveille le backend Render (ex. free tier) via GET sur une URL publique.
 #
+# Échecs fréquents si --max-time trop court : cold start Spring peut dépasser 60–120 s,
+# et le proxy Render renvoie 503 tant que l’instance n’est pas prête. D’où max-time +
+# --retry-all-errors (pour 5xx) et plusieurs tentatives.
+#
 # Configuration (Settings → Secrets and variables → Actions) :
 #   RENDER_KEEPALIVE_URL = URL complète, ex. https://VOTRE-SERVICE.onrender.com/actuator/health
 #
-# Horaires : aucun ping entre minuit et 7h (Europe/Paris), comme le keep-alive côté Angular.
+# Horaires : pings 24h/24 depuis GitHub (évite la mise en veille Render entre minuit et 7h).
+# Le front Angular garde sa plage silencieuse locale (pas de requêtes depuis le navigateur la nuit).
 #
 # Branche : les workflows `schedule` ne tournent que sur la branche PAR DÉFAUT du dépôt.
 # Si ta branche par défaut est `main`, merge ce fichier sur `main` ou change la branche par défaut.
@@ -32,7 +37,7 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: GET santé (hors 0h–7h heure de Paris)
+      - name: GET santé (timeouts compat cold start Render)
         env:
           KEEPALIVE_URL: ${{ secrets.RENDER_KEEPALIVE_URL }}
         run: |
@@ -51,11 +56,11 @@ jobs:
             echo "RENDER_KEEPALIVE_URL invalide après nettoyage (attendu: https://... sans espace ni guillemets). Longueur=${#url}"
             exit 1
           fi
-          hour="$(TZ=Europe/Paris date +%H)"
-          hour="$((10#$hour))"
-          if [ "$hour" -ge 0 ] && [ "$hour" -lt 7 ]; then
-            echo "Plage silencieuse Europe/Paris (00h00–06h59), pas de requête."
-            exit 0
-          fi
-          echo "Ping keep-alive (heure Paris=$hour, longueur URL=${#url})"
-          curl -fsS --max-time 60 --retry 2 --retry-delay 5 -- "$url"
+          echo "Ping keep-alive (longueur URL=${#url}, max 240s par tentative, retries sur 5xx)"
+          curl -fsS \
+            --connect-timeout 30 \
+            --max-time 240 \
+            --retry 5 \
+            --retry-delay 20 \
+            --retry-all-errors \
+            -- "$url"

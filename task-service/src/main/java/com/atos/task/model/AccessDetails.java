@@ -25,8 +25,8 @@ public class AccessDetails {
     @ManyToMany
     @JoinTable(
             name = "user_access_details",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "access_details_id")
+            joinColumns = @JoinColumn(name = "access_details_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> users;
 
